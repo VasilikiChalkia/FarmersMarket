@@ -1,20 +1,19 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using FarmersMarket.Models;
+
 
 namespace FarmersMarket.Models;
 
 public class farmersmarketContext(DbContextOptions<farmersmarketContext> options)
-    : IdentityDbContext<User>(options)   // ← User αντί για AppUser
+    : IdentityDbContext<User>(options)
 {
-    // Τα υπόλοιπα DbSet<> σου εδώ, αμετάβλητα
-    // public DbSet<Market>  Markets  { get; set; }
-    // public DbSet<License> Licenses { get; set; }
+    public DbSet<seller> Sellers => Set<seller>();
+    public DbSet<seller_license> SellerLicenses => Set<seller_license>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        base.OnModelCreating(builder); // ← ΑΠΑΡΑΙΤΗΤΟ πρώτο
+        base.OnModelCreating(builder);
 
-        // Οι δικοί σου fluent κανόνες κάτω από το base
+        builder.ApplyConfigurationsFromAssembly(typeof(farmersmarketContext).Assembly);
     }
 }
