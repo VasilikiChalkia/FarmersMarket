@@ -30,5 +30,7 @@ namespace FarmersMarket.Models
 
         // Navigation
         public ICollection<seller_license> Licenses { get; set; } = [];
+
+        public ICollection<market_seller> MarketSellers { get; set; } = new List<market_seller>();
     }
 }

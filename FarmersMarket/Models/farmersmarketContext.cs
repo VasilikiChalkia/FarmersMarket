@@ -36,6 +36,11 @@ public class farmersmarketContext(DbContextOptions<farmersmarketContext> options
              .WithOne(l => l.Seller)
              .HasForeignKey(l => l.SellerId)
              .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasMany(s => s.MarketSellers) 
+              .WithOne(ms => ms.Seller)     
+              .HasForeignKey(ms => ms.SellerId)
+              .OnDelete(DeleteBehavior.Cascade);
         });
 
         // ── SellerLicense ─────────────────────────────────────────────────
