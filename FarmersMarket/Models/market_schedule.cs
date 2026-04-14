@@ -1,4 +1,5 @@
-﻿using static FarmersMarket.Features.Markets.MarketsDTO;
+﻿using static FarmersMarket.Features.Markets.MarketEnums;
+using static FarmersMarket.Features.Markets.MarketsDTO;
 
 namespace FarmersMarket.Models
 {

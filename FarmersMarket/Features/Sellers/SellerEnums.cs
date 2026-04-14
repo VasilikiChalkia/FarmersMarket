@@ -4,7 +4,7 @@
     {
         public enum SellerType
         {
-            Pro2ducer,       // Παραγωγός
+            Producer,       // Παραγωγός
             Professional,   // Επαγγελματίας
             Seasonal        // Εποχικός
         }

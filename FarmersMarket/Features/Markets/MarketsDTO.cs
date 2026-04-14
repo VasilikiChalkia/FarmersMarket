@@ -1,25 +1,10 @@
-﻿namespace FarmersMarket.Features.Markets
+﻿using static FarmersMarket.Features.Markets.MarketEnums;
+
+namespace FarmersMarket.Features.Markets
 {
     public class MarketsDTO
     {
-        public enum MarketType
-        {
-            Laiki,       // Λαϊκή αγορά
-            Organic,     // Βιολογική
-            Seasonal     // Εποχική
-        }
-
-        public enum DayOfWeekGr
-        {
-            Monday = 1,
-            Tuesday = 2,
-            Wednesday = 3,
-            Thursday = 4,
-            Friday = 5,
-            Saturday = 6,
-            Sunday = 7
-        }
-
+       
         public record MarketDto(
     int Id,
     string Name,
