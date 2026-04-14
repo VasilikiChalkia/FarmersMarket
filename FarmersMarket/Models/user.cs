@@ -4,7 +4,6 @@ namespace FarmersMarket.Models;
 
 // Το υπάρχον User.cs σου παίρνει όλα τα Identity fields δωρεάν:
 // Id, UserName, Email, PasswordHash, PhoneNumber, LockoutEnd, κ.λπ.
-// Προσθέτεις μόνο τα extra πεδία που χρειάζεσαι.
 public class User : IdentityUser
 {
     public string FirstName { get; set; } = string.Empty;

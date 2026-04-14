@@ -1,6 +1,7 @@
 using FarmersMarket.Features.Markets;
 using FarmersMarket.Features.Sellers;
 using FarmersMarket.Features.Users.Services;
+using FarmersMarket.Middlewares;
 using FarmersMarket.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -99,6 +100,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+app.UseGlobalExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
