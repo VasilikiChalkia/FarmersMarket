@@ -1,6 +1,7 @@
 ﻿using FarmersMarket.Models;
 using Microsoft.EntityFrameworkCore;
 using static FarmersMarket.Features.Markets.MarketsDTO;
+using static FarmersMarket.Features.Sellers.SellerEnums;
 using static FarmersMarket.Features.Sellers.SellersDTOs;
 
 namespace FarmersMarket.Features.Markets
@@ -103,21 +104,55 @@ namespace FarmersMarket.Features.Markets
 
         public async Task<(bool Success, string? Error)> AssignSellerAsync(int marketId, AssignSellerRequest req)
         {
-            if (!await db.Markets.AnyAsync(m => m.Id == marketId))
+            // 1. Φέρνουμε την αγορά για να δούμε αν υπάρχει και ποιο είναι το όριο θέσεων (TotalSpots)
+            var market = await db.Markets
+                .Include(m => m.MarketSellers)
+                .FirstOrDefaultAsync(m => m.Id == marketId);
+
+            if (market == null)
                 return (false, "Η αγορά δεν βρέθηκε.");
 
-            if (!await db.Sellers.AnyAsync(s => s.Id == req.SellerId))
+            // 2. Έλεγχος αν ο πωλητής υπάρχει και είναι ενεργός
+            var seller = await db.Sellers
+                .Include(s => s.Licenses)
+                .FirstOrDefaultAsync(s => s.Id == req.SellerId);
+
+            if (seller == null)
                 return (false, "Ο πωλητής δεν βρέθηκε.");
 
-            if (await db.MarketSellers.AnyAsync(ms => ms.MarketId == marketId && ms.SellerId == req.SellerId))
+            if (!seller.IsActive)
+                return (false, "Ο πωλητής είναι απενεργοποιημένος.");
+
+            // 3. Έλεγχος αν ο πωλητής έχει τουλάχιστον μία ενεργή άδεια
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+            if (!seller.Licenses.Any(l => l.Status == LicenseStatus.Active && l.ExpiresAt > today))
+            {
+                return (false, "Ο πωλητής δεν διαθέτει έγκυρη/ενεργή άδεια.");
+            }
+
+            // 4. Έλεγχος αν ο πωλητής είναι ήδη στην αγορά
+            if (market.MarketSellers.Any(ms => ms.SellerId == req.SellerId))
                 return (false, "Ο πωλητής είναι ήδη ανατεθειμένος σε αυτή την αγορά.");
 
+            // 5. Έλεγχος αν η συγκεκριμένη θέση (SpotNumber) είναι ήδη κατειλημμένη
+            if (market.MarketSellers.Any(ms => ms.SpotNumber == req.SpotNumber && ms.IsActive))
+                return (false, $"Η θέση {req.SpotNumber} είναι ήδη κατειλημμένη από άλλον πωλητή.");
+
+            // 6. Έλεγχος χωρητικότητας (Capacity Check)
+            var activeSellersCount = market.MarketSellers.Count(ms => ms.IsActive);
+            if (activeSellersCount >= market.TotalSpots)
+                return (false, "Η αγορά είναι πλήρης (δεν υπάρχουν διαθέσιμες θέσεις).");
+
+            // Αν όλα είναι OK, προχωράμε στην προσθήκη
             db.MarketSellers.Add(new market_seller
             {
                 MarketId = marketId,
                 SellerId = req.SellerId,
                 SpotNumber = req.SpotNumber,
-                SpotLength = req.SpotLength
+                SpotLength = req.SpotLength,
+                AssignedAt = DateTime.UtcNow,
+                IsActive = true
             });
 
             await db.SaveChangesAsync();
