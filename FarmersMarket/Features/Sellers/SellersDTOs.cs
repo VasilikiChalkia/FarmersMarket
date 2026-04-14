@@ -54,7 +54,7 @@ namespace FarmersMarket.Features.Sellers
         DateOnly ExpiresAt
     );
 
-        // Φίλτρα αναζήτησης (πολυκριτηριακή)
+        // Φίλτρα αναζήτησης
         public record SellerQueryParams(
             string? Name,
             string? Afm,

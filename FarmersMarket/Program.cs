@@ -1,3 +1,4 @@
+using FarmersMarket.Features.Markets;
 using FarmersMarket.Features.Sellers;
 using FarmersMarket.Features.Users.Services;
 using FarmersMarket.Models;
@@ -65,6 +66,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISellerService, SellerService>();
+builder.Services.AddScoped<IMarketService, MarketService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
